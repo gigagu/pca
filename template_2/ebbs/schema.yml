@@ -1,0 +1,1162 @@
+version: 2
+
+models:
+
+    - name:  tgt_ebbs__prty_rtng_ebbs_mastcrg
+      description: 'Party Rating Information with details of Rating Code, Type, Agency etc'
+      columns:
+      - name: PRTY_ID
+        description: 'Customer Identification Number'
+        meta:
+          info : "This attribute is the identification key that identifies the customer in the source / transaction processing systems."
+        data_type: VARCHAR(128)
+        tests:
+          - not_null
+          #- unique
+      - name: SRC_SYS
+        description: "Source System Name"
+        data_type: VARCHAR(50)
+        meta:
+          info : "This attribute is used to identify the source that provides the data."
+      - name: CTRY_CD
+        description: "Country code"
+        data_type: VARCHAR(3)
+        meta:
+          info : "This attribute is used to identify the Country that provides the data."
+      - name: STRT_DT
+        description: "Start date"
+        data_type: DATE
+        meta:
+          info : "The date on which the data is initially loaded. Subsequent to the initial loading, it represents the date of change of the data."
+      - name: END_DT
+        description: "End date"
+        data_type: DATE
+        meta:
+          info : "Specifies the end of date of the validity period of the record."
+      - name: PRTY_CR_RISK_RTNG_AGNCY_TYPE
+        description: "Credit Risk Rating Type Code Description"
+        data_type: VARCHAR(100)
+        meta:
+          info : "This attribute is the corresponding description of Credit Risk Rating type code indicating the Credit Risk Rating."
+      - name: PRTY_CR_RISK_RTNG_CCYT
+        description: "Currency Code Description"
+        data_type: VARCHAR(3)
+        meta:
+          info : "This attribute is the corresponding description of Currency Code in which the transaction has transpired."
+      - name: PRTY_CR_RISK_RTNG_CD
+        description: "Credit Risk Rating Code"
+        data_type: VARCHAR(50)
+        meta:
+          info : "This attribute is External Credit Risk Rating Code which contains the credit ratings given by external international/local rating agencies/Credit Bureau to indicate the customer rating."
+      - name: PRTY_CR_RISK_RTNG_TYPE
+        description: "Credit Risk Rating Type Code"
+        data_type: VARCHAR(100)
+        meta:
+          info : "This attribute indicates whether the Credit Risk Grade is an internal or external rating."
+      - name: RTNG_CAT_CD
+        description: "Rating Category Code"
+        data_type: VARCHAR(50)
+        meta:
+          info : "Classifies a rating as internal, external, or scoring. "
+      - name: PRTY_CR_RISK_RTNG_CD_DESC
+        description: "Credit Risk Rating Code Description and Credit Risk Rating Type Code Description"
+        data_type: VARCHAR(256)
+        meta:
+          info : "This attribute is the corresponding description of the Credit Risk Rating Type Code which indicates whether the Credit Risk Grade is an internal or external rating."
+      - name: PRTY_CR_RISK_RTNG_STRT_DT
+        description: "Credit Risk Rating Effective Date"
+        data_type: DATE
+        meta:
+          info : "This attribute indicates the date when the credit grade approved. Caution: This date should be changed only when there is a change in the CRG code."
+      - name: APRV_EMP_ID
+        description: "Approver Employee Identification Number"
+        data_type: VARCHAR(50)
+        meta:
+          info : "This term refers to the identification number of the authorizer who has approved the transaction."
+      - name: ODS
+        description: "Snap Shot Date"
+        data_type: DATE
+        meta:
+          info : "Snap Shot Date"
+
+    - name:  tgt_ebbs__acct_ebbs_in
+      description: 'Party Rating Information with details of Rating Code, Type, Agency etc'
+      columns:
+      - name: acct_id
+        description: 'Transaction Processing (TP) System Account Number'
+        meta:
+          info : "This attribute refers to the Unique identifier for CASA Account/ Deposit/ Loan/ Card etc in the TP System."
+        data_type: "varchar(128)"
+      - name: acct_ccy
+        description: "This attribute refers to the TP System currency code of the CASA Account/ Deposit/ Loan/ Card etc."
+        data_type: varchar
+      - name: ctry_cd
+        description: "This attribute is used to identify the Country that provides the data."
+        data_type: varchar
+      - name: end_dt
+        description: "Specifies the end of date of the validity period of the record."
+        data_type: date
+      - name: strt_dt
+        description: "The date on which the data is initially loaded. Subsequent to the initial loading, it represents the date of change of the data."
+        data_type: date
+      - name: src_sys
+        description: "This attribute is used to identify the source that provides the data."
+        data_type: varchar
+      - name: acct_cat_cd
+        description: "This attribute refers to the CASA Account/ Deposit/ Loan/ Card etc category code."
+        data_type: varchar
+      - name: acct_clse_dt
+        description: "This attribute refers to the date on which the CASA Account/ Deposit/ Loan/ Card etc was closed."
+        data_type: date
+      - name: acct_clsr_rsn
+        description: "This attribute refers to the reason for closing the CASA Account/ Deposit/ Loan/ Card etc."
+        data_type: varchar
+      - name: acct_cr_int_acr_flg
+        description: "This attribute indicates whether the CASA Account/ Deposit/ Loan/ Card etc has a credit interest accrual."
+        data_type: varchar
+      - name: acct_dr_int_acrl_flg
+        description: "This attribute indicates whether the CASA Account/ Deposit/ Loan/ Card etc has a debit interest accrual."
+        data_type: varchar
+      - name: acct_drmt_dt
+        description: "This attribute refers to the date on which the CASA Account/ Deposit/ Loan/ Card etc was last debited."
+        data_type: date
+      - name: acct_frzn_cd
+        description: "This attribute refers to the freeze code of the CASA Account/ Deposit/ Loan/ Card etc."
+        data_type: varchar
+      - name: acct_in_col_flg
+        description: "This attribute indicates whether the CASA Account/ Deposit/ Loan/ Card etc is in collection."
+        data_type: varchar
+      - name: acct_int_type_cd
+        description: "This attribute refers to the type of interest applicable to the CASA Account/ Deposit/ Loan/ Card etc."
+        data_type: varchar
+      - name: acct_int_acc_ccy
+        data_type: varchar
+      - name: acct_last_cr_tran_amt
+        data_type: decimal(38,12)
+      - name: acct_last_dr_tran_amt
+        data_type: decimal(38,12)
+      - name: acct_last_exces_tran_amt
+        data_type: decimal(38,12)
+      - name: acct_open_dt
+        data_type: date
+      - name: acct_open_br_cd
+        data_type: varchar
+      - name: acct_pool_flg
+        data_type: varchar
+      - name: acct_pool_id
+        data_type: varchar
+      - name: acct_prev_cr_tran_dt
+        data_type: date
+      - name: acct_prev_dr_tran_dt
+        data_type: date
+      - name: acct_reactivated_dt
+        data_type: date
+      - name: acct_short_nm
+        data_type: varchar
+      - name: acct_stmt_add_titl
+        data_type: varchar
+      - name: acct_sts_cd
+        data_type: varchar
+      - name: acct_unclaim_dt
+        data_type: date
+      - name: acr_int_adj_amt
+        data_type: decimal(38,12)
+      - name: amort_flg
+        data_type: varchar
+      - name: amort_type
+        data_type: varchar
+      - name: anchor_id
+        data_type: varchar
+      - name: anchor_nm
+        data_type: varchar
+      - name: auth_dt
+        data_type: date
+      - name: base_tenr
+        data_type: int
+      - name: bnf_cust_nm
+        data_type: varchar
+      - name: bk_cd
+        data_type: varchar
+      - name: bkg_ctry_cd
+        data_type: varchar
+      - name: bkg_loc_cd
+        data_type: varchar
+      - name: cap_relief
+        data_type: varchar
+      - name: cp_id
+        data_type: varchar
+      - name: cr_int_acr_bsis_cd
+        data_type: varchar
+      - name: cr_int_adj_acr_amt
+        data_type: decimal(38,12)
+      - name: cr_int_last_acr_amt
+        data_type: decimal(38,12)
+      - name: cr_int_last_pymt_dt
+        data_type: date
+      - name: cr_int_nxt_pymt_dt
+        data_type: date
+      - name: cr_int_pymt_freq
+        data_type: varchar
+      - name: cr_int_prd_cd
+        data_type: varchar
+      - name: cr_prot_os_fin_amt
+        data_type: decimal(38,12)
+      - name: cross_ccy_deal_flg
+        data_type: varchar
+      - name: curr_int_col_opt
+        data_type: varchar
+      - name: curr_int_pymt_frq
+        data_type: varchar
+      - name: curv_flg
+        data_type: varchar
+      - name: cust_acct_int_in_susp_flg
+        data_type: varchar
+      - name: cust_dep_type_cd
+        data_type: varchar
+      - name: cust_dep_val_dt
+        data_type: date
+      - name: cust_int_base_rt
+        data_type: decimal(15,11)
+      - name: cust_mrgn_rt
+        data_type: decimal(15,11)
+      - name: cust_mrgn_rt_flg
+        data_type: varchar
+      - name: nxt_maturity_dt
+        data_type: date
+      - name: data_src
+        data_type: varchar
+      - name: day_cnt_conv_cd
+        data_type: varchar
+      - name: days_past_due
+        data_type: int
+      - name: deal_clse_dsr_id
+        data_type: varchar
+      - name: deal_lien_amt
+        data_type: decimal(38,12)
+      - name: deal_match_flg
+        data_type: varchar
+      - name: deal_repr_strt_dt
+        data_type: date
+      - name: deal_roll_over_cnt
+        data_type: int
+      - name: deal_src_dsr_id
+        data_type: varchar
+      - name: deal_term_amt
+        data_type: decimal(38,12)
+      - name: deal_term_type
+        data_type: varchar
+      - name: deal_trsry_rt
+        data_type: decimal(15,11)
+      - name: dr_int_acr_bsis_cd
+        data_type: varchar
+      - name: dr_int_band_meth
+        data_type: varchar
+      - name: dr_int_last_acr_amt
+        data_type: decimal(38,12)
+      - name: dr_int_last_pymt_dt
+        data_type: date
+      - name: dr_int_nxt_pymt_dt
+        data_type: date
+      - name: dr_int_pymt_freq
+        data_type: varchar
+      - name: dr_int_adj_acr_amt
+        data_type: decimal(38,12)
+      - name: dr_int_prd_cd
+        data_type: varchar
+      - name: disapproved_period
+        data_type: int
+      - name: fac_orig_loc
+        data_type: varchar
+      - name: file_type
+        data_type: varchar
+      - name: fst_ln_drwdown_dt
+        data_type: date
+      - name: fix_period
+        data_type: varchar
+      - name: frt_on_land_cd
+        data_type: varchar
+      - name: ftp_base_rt
+        data_type: decimal(15,11)
+      - name: ftp_be_liq_prim_rt
+        data_type: decimal(15,11)
+      - name: ftp_contr_liq_prim_rt
+        data_type: decimal(15,11)
+      - name: ftp_cost_of_liq_rt
+        data_type: decimal(15,11)
+      - name: ftp_ctry_cost_of_liq_rt
+        data_type: decimal(15,11)
+      - name: ftp_inct_prim_rt
+        data_type: decimal(15,11)
+      - name: ftp_liq_prim_rt_dt
+        data_type: date
+      - name: ftp_liq_prim_tenr
+        data_type: int
+      - name: ftp_rt_dt
+        data_type: date
+      - name: fund_pl_maturity_dt
+        data_type: date
+      - name: ftp_rt
+        data_type: decimal(15,11)
+      - name: int_acr_up_to_dt
+        data_type: date
+      - name: int_acr_amt
+        data_type: decimal(38,12)
+      - name: int_band_brkp
+        data_type: varchar
+      - name: int_base_rt_mult
+        data_type: decimal(15,11)
+      - name: int_base_rt_type
+        data_type: varchar
+      - name: int_calc_day_conv
+        data_type: varchar
+      - name: int_only_flg
+        data_type: varchar
+      - name: int_pymt_day_conv
+        data_type: varchar
+      - name: int_pymt_due_dt
+        data_type: date
+      - name: int_rt
+        data_type: decimal(15,11)
+      - name: int_rt_eff_dt
+        data_type: date
+      - name: int_rt_type
+        data_type: varchar
+      - name: int_repymt_freq
+        data_type: int
+      - name: int_pymt_strt_dt
+        data_type: date
+      - name: islm_acct_flg
+        data_type: varchar
+      - name: islm_sub_prd
+        data_type: varchar
+      - name: last_cr_int_rt
+        data_type: decimal(15,11)
+      - name: last_cust_init_cr_tran_dt
+        data_type: date
+      - name: last_cust_init_dr_tran_dt
+        data_type: date
+      - name: last_dr_int_rt
+        data_type: decimal(15,11)
+      - name: last_exces_amt
+        data_type: decimal(38,12)
+      - name: last_exces_dt
+        data_type: date
+      - name: last_int_pymt_dt
+        data_type: date
+      - name: last_int_repr_dt
+        data_type: date
+      - name: lgl_ent_cd
+        data_type: varchar
+      - name: lgl_ent_id
+        data_type: varchar
+      - name: libr_dibr_flg
+        data_type: varchar
+      - name: lifcycl_sts_cd
+        data_type: varchar
+      - name: ln_clas
+        data_type: varchar
+      - name: ln_eff_dt
+        data_type: date
+      - name: ln_tenr_in_days
+        data_type: int
+      - name: local_prd_cd
+        data_type: varchar
+      - name: local_prd_cd_chg_dt
+        data_type: date
+      - name: maturity_dt
+        data_type: date
+      - name: maturity_int_amt
+        data_type: decimal(38,12)
+      - name: max_tenr
+        data_type: int
+      - name: nxt_int_pymt_dt
+        data_type: date
+      - name: nxt_int_repr_dt
+        data_type: date
+      - name: nxt_pymt_dt
+        data_type: date
+      - name: nost_susp_flg
+        data_type: varchar
+      - name: obl_flg
+        data_type: varchar
+      - name: orig_maturty_dt
+        data_type: date
+      - name: orig_term_type
+        data_type: varchar
+      - name: orig_prin_amt
+        data_type: decimal(38,12)
+      - name: ovr_dft_type
+        data_type: varchar
+      - name: past_due_flg
+        data_type: varchar
+      - name: past_due_int_col_opt
+        data_type: varchar
+      - name: past_due_int_pymt_freq
+        data_type: varchar
+      - name: pnlty_amt
+        data_type: decimal(38,12)
+      - name: pnlty_chrg_flg
+        data_type: varchar
+      - name: pre_pymt_rt
+        data_type: decimal(15,11)
+      - name: prev_local_prd_cd
+        data_type: varchar
+      - name: prin_pymt_freq
+        data_type: varchar
+      - name: prg_cd
+        data_type: varchar
+      - name: prvsn_prd_cd
+        data_type: varchar
+      - name: prps_cd
+        data_type: varchar
+      - name: repr_dt
+        data_type: date
+      - name: recrse_flg
+        data_type: varchar
+      - name: reg_int_col_opt
+        data_type: varchar
+      - name: risk_prty_id
+        data_type: varchar
+      - name: roll_over_flg
+        data_type: varchar
+      - name: roll_over_int_cap_flg
+        data_type: varchar
+      - name: rlovr_orig_int_rt_flg
+        data_type: varchar
+      - name: scty_type_cd
+        data_type: varchar
+      - name: sel_down_flg
+        data_type: varchar
+      - name: setlm_dt
+        data_type: date
+      - name: src_cust_id
+        data_type: varchar
+      - name: std_prd_cd
+        data_type: varchar
+      - name: struc_nm
+        data_type: varchar
+      - name: struc_trd_flg
+        data_type: varchar
+      - name: struc_trd_sub_type
+        data_type: varchar
+      - name: struc_trd_type
+        data_type: varchar
+      - name: sust_trd_fin_flg
+        data_type: varchar
+      - name: tot_chrg_off_amt
+        data_type: decimal(38,12)
+      - name: tp_ent_nm
+        data_type: varchar
+      - name: ult_risk_ctry
+        data_type: varchar
+      - name: unclaim_dt
+        data_type: date
+      - name: uwrt_type
+        data_type: varchar
+      - name: vost_flg
+        data_type: varchar
+      - name: waive_exces_int_flg
+        data_type: varchar
+      - name: int_rt_bsis_cd
+        data_type: varchar
+      - name: non_cr_prot_os_fin_amt
+        data_type: decimal(38,12)
+      - name: int_pymt_freq
+        data_type: varchar
+      - name: trd_fin_type
+        data_type: varchar
+      - name: true_sales_flg
+        data_type: varchar
+      - name: ods
+        data_type: date
+      - name: acct_br_nm
+        data_type: varchar
+      - name: actg_meth_cd
+        data_type: varchar
+      - name: fst_int_pymt_dt
+        data_type: date
+      - name: fst_prin_pymt_dt
+        data_type: date
+      - name: int_past_due_dt
+        data_type: date
+      - name: local_ccy
+        data_type: varchar
+      - name: local_ccy_fx_rt
+        data_type: decimal(15,11)
+      - name: prin_past_due_dt
+        data_type: date
+      - name: ptfol_id
+        data_type: varchar
+      - name: ptfol_nm
+        data_type: varchar
+      - name: resv_rt
+        data_type: decimal(15,11)
+      - name: rmng_tenr
+        data_type: int
+      - name: card_blk_cd
+        data_type: varchar
+      - name: cash_advn_int_rt
+        data_type: decimal(15,11)
+      - name: cr_card_type_cd
+        data_type: varchar
+      - name: cr_card_usr_cd
+        data_type: varchar
+      - name: deliquency_age_val_mo_1
+        data_type: varchar
+      - name: avail_cr_amt
+        data_type: decimal(38,12)
+      - name: acct_stm_cyc_day
+        data_type: int
+      - name: fst_ila_pmt_dt
+        data_type: date
+      - name: dpd_curr_bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_x_day_bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_30_day__bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_60_day__bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_90_day__bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_120_day__bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_150_day__bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_180_day__bal_amt
+        data_type: decimal(38,12)
+      - name: dpd_210_day__bal_amt
+        data_type: decimal(38,12)
+      - name: drp_acct_fl
+        data_type: varchar
+      - name: prod_cd_val
+        data_type: decimal(30)
+      - name: lpc_grp_cd
+        data_type: varchar
+      - name: lpc_type
+        data_type: varchar
+      - name: os_invc_dt
+        data_type: date
+      - name: tp_biz_grp_cd
+        data_type: varchar
+      - name: tp_biz_sgmt_cd
+        data_type: varchar
+      - name: tp_biz_sub_sgmt_cd
+        data_type: varchar
+      - name: tp_biz_unit_cd
+        data_type: varchar
+      - name: acct_sts_desc
+        data_type: varchar
+      - name: fac_orig_loc_desc
+        data_type: varchar
+      - name: int_pymt_freq_desc
+        data_type: varchar
+      - name: int_rt_type_desc
+        data_type: varchar
+      - name: ln_clas_desc
+        data_type: varchar
+      - name: local_prd_desc
+        data_type: varchar
+      - name: prin_pymt_freq_desc
+        data_type: varchar
+      - name: prps_desc
+        data_type: varchar
+      - name: lpc_grp_desc
+        data_type: varchar
+      - name: lpc_type_desc
+        data_type: varchar
+      - name: reprc_freq
+        data_type: varchar
+      - name: reprc_freq_desc
+        data_type: varchar
+      - name: struc_type
+        data_type: varchar
+      - name: struc_type_desc
+        data_type: varchar
+      - name: rlovr_wait_period
+        data_type: int
+      - name: trnch_id
+        data_type: varchar
+      - name: acctng_unit
+        data_type: varchar
+      - name: assigned_flg
+        data_type: varchar
+      - name: auto_rvsl_idn
+        data_type: varchar
+      - name: backed_by_cd
+        data_type: varchar
+      - name: bank_grp_cd
+        data_type: varchar
+      - name: base_rate_index_code
+        data_type: varchar
+      - name: base_rate_value_pct
+        data_type: decimal(15,11)
+      - name: buyer_le_id
+        data_type: varchar
+      - name: continuing_ind
+        data_type: varchar
+      - name: core_banking_cust_id
+        data_type: varchar
+      - name: cust_section
+        data_type: varchar
+      - name: day_rule
+        data_type: varchar
+      - name: deal_id
+        data_type: varchar
+      - name: disclr_ind
+        data_type: varchar
+      - name: fi_risk_flg
+        data_type: varchar
+      - name: fund_rt
+        data_type: varchar
+      - name: funded_flg
+        data_type: varchar
+      - name: fundg_deal_no
+        data_type: varchar
+      - name: gam_pct
+        data_type: decimal(15,11)
+      - name: goods_desc
+        data_type: varchar
+      - name: guarantor
+        data_type: varchar
+      - name: ins_ccy_code
+        data_type: varchar
+      - name: ins_pct
+        data_type: decimal(15,11)
+      - name: insur_id
+        data_type: varchar
+      - name: insur_le_id
+        data_type: varchar
+      - name: lc_type
+        data_type: varchar
+      - name: lmt_cust_flag
+        data_type: varchar
+      - name: lmt_cust_id
+        data_type: varchar
+      - name: lmt_grp_id
+        data_type: varchar
+      - name: lmt_id
+        data_type: varchar
+      - name: lmt_id_2
+        data_type: varchar
+      - name: lmt_prd_cd
+        data_type: varchar
+      - name: lmt_resrv_id
+        data_type: varchar
+      - name: lmt_risk_party_flg
+        data_type: varchar
+      - name: lmt_risk_party_id
+        data_type: varchar
+      - name: maturty_to_biz_dt
+        data_type: varchar
+      - name: maturty_to_calndr_dt
+        data_type: varchar
+      - name: mrgn_factor
+        data_type: decimal(15,11)
+      - name: no_of_days_accrd
+        data_type: varchar
+      - name: nonobligor_le_id
+        data_type: varchar
+      - name: notional_exp_date
+        data_type: date
+      - name: obligor_le_id
+        data_type: varchar
+      - name: policy_no
+        data_type: varchar
+      - name: ppl_excess_flg
+        data_type: varchar
+      - name: program_code
+        data_type: varchar
+      - name: prtnt_lmt_id
+        data_type: varchar
+      - name: prtnt_lmt_id_2
+        data_type: varchar
+      - name: reg_int_pl_amt
+        data_type: decimal(15,11)
+      - name: res_ind
+        data_type: varchar
+      - name: rev_switch
+        data_type: varchar
+      - name: risk_sold_flg
+        data_type: varchar
+      - name: risk_sold_pct
+        data_type: decimal(15,11)
+      - name: sale_ldgr_flg
+        data_type: varchar
+      - name: supplier_le_id
+        data_type: varchar
+      - name: sustainable_flag
+        data_type: varchar
+      - name: trd_bndry
+        data_type: varchar
+      - name: unassigned_type
+        data_type: varchar
+      - name: under_lc_ind
+        data_type: varchar
+      - name: lpc_grp
+        data_type: varchar
+      - name: fund_cd
+        data_type: varchar
+      - name: sctr_cd
+        data_type: varchar
+      - name: auto_ln_crt_flg
+        data_type: varchar
+      - name: ln_crt_src_cd
+        data_type: varchar
+      - name: acct_type_cd
+        data_type: varchar
+      - name: int_cat_cd
+        data_type: varchar
+      - name: mrtg_cd
+        data_type: varchar
+      - name: cust_id_doc_type
+        data_type: varchar
+      - name: cgc_guar_cd
+        data_type: varchar
+      - name: moa_ind
+        data_type: varchar
+      - name: moa_offset_prin_bal
+        data_type: decimal(38,12)
+      - name: bba_prft_rt
+        data_type: decimal(38,12)
+      - name: unern_int_inc_amt
+        data_type: decimal(38,12)
+      - name: curr_age_cd
+        data_type: varchar
+      - name: mis_type
+        data_type: varchar
+      - name: mis_cd
+        data_type: varchar
+      - name: mis_sts
+        data_type: varchar
+      - name: mis_last_maint_dt
+        data_type: date
+      - name: isic_cd
+        data_type: varchar
+      - name: lcl_deal_type
+        data_type: varchar
+      - name: deal_lien_no
+        data_type: varchar
+      - name: gl_acct_no
+        data_type: varchar
+      - name: rpt_cat_cd
+        data_type: varchar
+      - name: acct_last_mod_dt
+        data_type: date
+      - name: acct_last_mod_tm
+        data_type: varchar
+      - name: acct_corp_flg
+        data_type: varchar
+      - name: acct_sme_flg
+        data_type: varchar
+      - name: cr_int_adj_amt
+        data_type: decimal(38,12)
+      - name: dr_int_adj_amt
+        data_type: decimal(38,12)
+      - name: cr_int_man_adj_amt
+        data_type: decimal(38,12)
+      - name: dr_int_man_adj_amt
+        data_type: decimal(38,12)
+      - name: atm_flg
+        data_type: varchar
+      - name: prd_cd_desc
+        data_type: varchar
+      - name: spl_prd_flg
+        data_type: varchar
+      - name: sys_adj_int_amt
+        data_type: decimal(38,12)
+      - name: actl_int_rt
+        data_type: decimal(38,12)
+      - name: acct_clsr_rsn_desc
+        data_type: varchar
+      - name: dr_int_last_pymt_amt
+        data_type: decimal(38,12)
+      - name: cr_int_last_pymt_amt
+        data_type: decimal(38,12)
+      - name: deal_ref_dtl_1
+        data_type: varchar
+      - name: deal_ref_dtl_2
+        data_type: varchar
+      - name: deal_ref_dtl_3
+        data_type: varchar
+      - name: acct_ref_id
+        data_type: varchar
+      - name: cre_prps_cd
+        data_type: varchar
+      - name: stf_ind
+        data_type: varchar
+      - name: bank_acc
+        data_type: varchar
+      - name: expt_impt_ind
+        data_type: varchar
+      - name: bank_lmt_ind
+        data_type: varchar
+      - name: cbn_clean_dscrp_ind
+        data_type: varchar
+      - name: guar_clas
+        data_type: varchar
+      - name: guar_type
+        data_type: varchar
+      - name: sght_ind
+        data_type: varchar
+      - name: tax_expt
+        data_type: varchar
+      - name: cont_applicbl
+        data_type: varchar
+      - name: cp_applicbl
+        data_type: varchar
+      - name: last_prcn_dt
+        data_type: date
+      - name: next_prcn_dt
+        data_type: date
+      - name: priv_lbl_bank_id
+        data_type: varchar
+      - name: priv_lbl_bank_nm
+        data_type: varchar
+      - name: priv_lbl_bank_ind
+        data_type: varchar
+      - name: isu_bank_id
+        data_type: varchar
+      - name: isu_bank_nm
+        data_type: varchar
+      - name: applt
+        data_type: varchar
+      - name: applt_bank
+        data_type: varchar
+      - name: benef
+        data_type: varchar
+      - name: adv_bank
+        data_type: varchar
+      - name: adv_thru
+        data_type: varchar
+      - name: strd_trs_rcpt_ind
+        data_type: varchar
+      - name: ecic_ind
+        data_type: varchar
+      - name: secr_by_goods_ind
+        data_type: varchar
+      - name: col_type
+        data_type: varchar
+      - name: agncy_lc_ind
+        data_type: varchar
+      - name: fin_sub_type
+        data_type: varchar
+      - name: ods_sec_id
+        data_type: varchar
+      - name: otp_ltp_flag
+        data_type: varchar
+      - name: int_rt_curve
+        data_type: varchar
+      - name: buy_sel_cd
+        data_type: varchar
+      - name: dr_int_nxt_pymt_amt
+        data_type: decimal(38,12)
+      - name: cr_int_nxt_pymt_amt
+        data_type: decimal(38,12)
+      - name: exces_dr_int_rt
+        data_type: decimal(15,11)
+      - name: ovrdu_day_cnt
+        data_type: varchar
+      - name: extr_deal_ref_no
+        data_type: varchar
+      - name: extr_deal_sys
+        data_type: varchar
+      - name: instlmt_pymt_cnt
+        data_type: int
+      - name: prty_id
+        data_type: varchar
+      - name: lifcycl_sts_dt
+        data_type: date
+      - name: min_int_rt
+        data_type: decimal(38,12)
+      - name: max_int_rt
+        data_type: decimal(38,12)
+      - name: cr_int_base_rt
+        data_type: decimal(38,12)
+      - name: cr_mrgn
+        data_type: varchar
+      - name: dr_int_base_rt
+        data_type: decimal(38,12)
+      - name: dr_mrgn
+        data_type: varchar
+      - name: base_days
+        data_type: int
+      - name: prvsn_acct_id
+        data_type: varchar
+      - name: tot_os_bal_amt
+        data_type: decimal(38,12)
+      - name: cr_prvsn_acct_id
+        data_type: varchar
+      - name: dr_prvsn_acct_id
+        data_type: varchar
+      - name: transctr_flg
+        data_type: varchar
+      - name: guart_prty_id
+        data_type: varchar
+      - name: appr_lmt_id
+        data_type: varchar
+      - name: guar_expsr_type
+        data_type: varchar
+      - name: port_ld
+        data_type: varchar
+      - name: port_dschg
+        data_type: varchar
+      - name: port_ld_city
+        data_type: varchar
+      - name: port_dschg_city
+        data_type: varchar
+      - name: extr_prty_id
+        data_type: varchar
+      - name: acct_rl_ccy
+        data_type: varchar
+      - name: acct_rl_id
+        data_type: varchar
+      - name: acct_titl
+        data_type: varchar
+      - name: asset_bal_os_amt
+        data_type: decimal(38,12)
+      - name: card_mtd_bal_amt
+        data_type: decimal(38,12)
+      - name: cash_bal_amt
+        data_type: decimal(38,12)
+      - name: cash_bal_beg_of_cur_cyc
+        data_type: decimal(38,12)
+      - name: cont_os_bal_amt
+        data_type: decimal(38,12)
+      - name: earmark_cr_bal_amt
+        data_type: decimal(38,12)
+      - name: earmark_dr_bal_amt
+        data_type: decimal(38,12)
+      - name: extr_prty_nm
+        data_type: varchar
+      - name: fee_acr_amt
+        data_type: decimal(38,12)
+      - name: fee_recd_adv_amt
+        data_type: decimal(38,12)
+      - name: fee_recd_amt
+        data_type: decimal(38,12)
+      - name: frwd_cr_bal_amt
+        data_type: decimal(38,12)
+      - name: frwd_dr_bal_amt
+        data_type: decimal(38,12)
+      - name: int_pybl_amt_td
+        data_type: decimal(38,12)
+      - name: int_rcvbl_amt_td
+        data_type: decimal(38,12)
+      - name: int_recd_adv_amt
+        data_type: decimal(38,12)
+      - name: liab_bal_os_amt
+        data_type: decimal(38,12)
+      - name: mtd_fee_repmt_amt
+        data_type: decimal(38,12)
+      - name: mtd_int_repmt_amt
+        data_type: decimal(38,12)
+      - name: mth_avg_asset_bal_amt
+        data_type: decimal(38,12)
+      - name: mth_avg_cont_bal_amt
+        data_type: decimal(38,12)
+      - name: mth_avg_liab_bal_amt
+        data_type: decimal(38,12)
+      - name: oth_pybl_amt_td
+        data_type: decimal(38,12)
+      - name: oth_rcvbl_amt_td
+        data_type: decimal(38,12)
+      - name: past_due_os_bal_amt
+        data_type: decimal(38,12)
+      - name: past_due_os_int_amt
+        data_type: decimal(38,12)
+      - name: prty_lgl_nm
+        data_type: varchar
+      - name: prty_long_nm
+        data_type: varchar
+      - name: prty_short_nm
+        data_type: varchar
+      - name: rec_prcs_dt
+        data_type: date
+      - name: rec_rlovr_flg
+        data_type: varchar
+      - name: risk_partp_pct
+        data_type: decimal(38,12)
+      - name: rl_type_cd
+        data_type: varchar
+      - name: rtl_bal_amt
+        data_type: decimal(38,12)
+      - name: rtl_bal_beg_of_cur_cyc
+        data_type: decimal(38,12)
+      - name: staf_flg
+        data_type: varchar
+      - name: staf_id
+        data_type: varchar
+      - name: stm_due_amt
+        data_type: decimal(38,12)
+      - name: yr_avg_asset_bal_amt
+        data_type: decimal(38,12)
+      - name: yr_avg_cont_os_bal_amt
+        data_type: decimal(38,12)
+      - name: yr_avg_liab_bal_amt
+        data_type: decimal(38,12)
+      - name: drp_cur_bal_amt
+        data_type: decimal(38,12)
+      - name: min_repmt_amt
+        data_type: decimal(38,12)
+      - name: ods_val
+        data_type: varchar
+      - name: country_val
+        data_type: varchar
+      - name: tp_sys_val
+        data_type: varchar
+      - name: process_id_val
+        data_type: varchar
+      - name: frequency_val
+        data_type: varchar
+      - name: version_val
+        data_type: varchar
+
+    - name: tgt_ebbs__acct_bal_ebbs_account_in
+      description: "This attribute refers to the Unique identifier for CASA Account/ Deposit/ Loan/ Card etc in the TP System."      
+      columns:
+      - name: acct_id
+        description: "This attribute refers to the Unique identifier for CASA Account/ Deposit/ Loan/ Card etc in the TP System."
+        data_type: Varchar
+        tests:
+          - not_null
+          #- unique
+      - name: src_sys
+        description: "This attribute is used to identify the source that provides the data."
+        data_type: Varchar
+      - name: ctry_cd
+        description: "This attribute is used to identify the Country that provides the data."
+        data_type: Varchar
+      - name: strt_dt
+        description: "The date on which the data is initially loaded. Subsequent to the initial loading, it represents the date of change of the data."
+        data_type: date
+      - name: end_dt
+        description: "Specifies the end of date of the validity period of the record."
+        data_type: date
+      - name: acct_ccy
+        description: "This attribute refers to the TP System currency code of the CASA Account/ Deposit/ Loan/ Card etc."
+        data_type: Varchar
+      - name: asset_bal_os_amt
+        description: "This attribute allows to store the Debit ledger balance amount of a account."
+        meta:
+          info:  
+              "CAST(CASE
+              WHEN EBBS_BEBAL.LEDGERBALANCE < 0 THEN EBBS_BEBAL.LEDGERBALANCE
+              ELSE 0
+              END AS DECIMAL(38,12))
+              "
+                                
+        data_type: decimal(38,12)
+      - name: cont_os_bal_amt
+        description: "This attribute refers to the contingent outstanding balance limit amount which is used to identify the contingent outstanding balance of the limit."
+        data_type: decimal(38,12)
+      - name: fee_recd_adv_amt
+        description: "Fee Income received in Advance Amount todate"
+        data_type: decimal(38,12)
+      - name: fee_recd_amt
+        description: "Fee Income received Amount todate"
+        data_type: decimal(38,12)
+      - name: int_pybl_amt_td
+        description: "This attribute refers to the Interest Payable Amount todate."
+        data_type: decimal(38,12)
+      - name: int_rcvbl_amt_td
+        description: "This attribute refers to the Interest Receivable Amount todate."
+        data_type: decimal(38,12)
+      - name: int_recd_adv_amt
+        description: "Interest Income received in Advance Amount todate"
+        data_type: decimal(38,12)
+      - name: liab_bal_os_amt
+        description: "This attribute allows to store the Credit ledger balance amount of a account."
+        data_type: decimal(38,12)
+      - name: mth_avg_asset_bal_amt
+        description: "This attribute refers to the average asset balance amount for the month."
+        data_type: decimal(38,12)
+      - name: mth_avg_cont_bal_amt
+        description: "This attribute refers to the average contingent outstanding balance amount for the month."
+        data_type: decimal(38,12)
+      - name: mth_avg_liab_bal_amt
+        description: "This attribute refers to the average liability balance amount for the month."
+        data_type: decimal(38,12)
+      - name: past_due_os_bal_amt
+        description: "This attribute refers to the Past Due Outstanding Balance Amount."
+        data_type: decimal(38,12)
+        
+      - name: past_due_os_int_amt
+        description: "This attribute refers to the Past Due Outstanding Interest Amount."
+        data_type: decimal(38,12)
+      - name: yr_avg_asset_bal_amt
+        description: "This attribute refers to the average asset balance amount for the year."
+        data_type: decimal(38,12)
+      - name: yr_avg_cont_os_bal_amt
+        data_type: decimal(38,12)
+      - name: yr_avg_liab_bal_amt
+        data_type: decimal(38,12)
+      - name: ods
+        data_type: date
+      - name: fee_acr_amt
+        data_type: decimal(38,12)
+      - name: mtd_fee_repmt_amt
+        data_type: decimal(38,12)
+      - name: mtd_int_repmt_amt
+        data_type: decimal(38,12)
+      - name: oth_pybl_amt_td
+        data_type: decimal(38,12)
+      - name: oth_rcvbl_amt_td
+        data_type: decimal(38,12)
+      - name: frwd_cr_bal_amt
+        data_type: decimal(38,12)
+      - name: frwd_dr_bal_amt
+        data_type: decimal(38,12)
+      - name: earmark_cr_bal_amt
+        data_type: decimal(38,12)
+      - name: earmark_dr_bal_amt
+        data_type: decimal(38,12)
+      - name: card_mtd_bal_amt
+        data_type: decimal(38,12)
+      - name: stm_due_amt
+        data_type: decimal(38,12)
+      - name: rtl_bal_beg_of_cur_cyc
+        data_type: decimal(38,12)
+      - name: cash_bal_beg_of_cur_cyc
+        data_type: decimal(38,12)
+      - name: cash_bal_amt
+        data_type: decimal(38,12)
+      - name: rtl_bal_amt
+        data_type: decimal(38,12)
+      - name: risk_partp_pct
+        data_type: decimal(38,12)
+      - name: acct_corp_flg
+        data_type: Varchar
+      - name: acct_sme_flg
+        data_type: Varchar
+      - name: recrse_flg
+        data_type: Varchar
+      - name: expsr_type
+        data_type: Varchar
+      - name: insur_le_id
+        data_type: Varchar
+      - name: maturity_dt
+        data_type: date
+      - name: fst_ln_drwdown_dt
+        data_type: date
+      - name: ln_eff_dt
+        data_type: date
+      - name: obligor_pd
+        data_type: decimal(38,12)
+      - name: rec_prcs_dt
+        data_type: date
+      - name: rec_rlovr_flg
+        data_type: Varchar
+      - name: ods_val
+        data_type: Varchar
+      - name: country_val
+        data_type: Varchar
+      - name: tp_sys_val
+        data_type: Varchar
+      - name: process_id_val
+        data_type: Varchar
+      - name: frequency_val
+        data_type: Varchar
+      - name: version_val
+        data_type: Varchar
+      

@@ -1,0 +1,138 @@
+;EBB~SG~W_ENTRP_PRTY~C_CRTD_CORE_PRTY~1400301SGEBB(SELECT WEP_PSE_I.PRTY_SROGT_ID as PRTY_SROGT_ID
+,WEP_PSE_I.DOM_PRTY_REF AS DOM_PRTY_REF
+,CASE WHEN trim(WEP_PSE_I.PROFILE_ID) IS NOT NULL  AND trim(WEP_PSE_I.PROFILE_ID) !='' THEN CONCAT (WEP_PSE_I.DATA_SRC_ICM, '-', WEP_PSE_I.SOURCE_COUNTRY_CODE_ICM, '-',WEP_PSE_I.PSEUDO_KEY)
+	  WHEN (trim(WEP_PSE_I.PROFILE_ID) IS NULL OR trim(WEP_PSE_I.PROFILE_ID) ='') THEN NULL 
+	  END AS ENTRP_PRTY_SROGT_ID
+,CASE WHEN  trim(WEP_PSE_I.PROFILE_ID) IS NOT NULL  AND trim(WEP_PSE_I.PROFILE_ID) !='' THEN WEP_PSE_I.PROFILE_ID
+	  WHEN trim(WEP_PSE_I.PROFILE_ID) IS NULL OR trim(WEP_PSE_I.PROFILE_ID) ='' THEN NULL 
+	  END AS ENTRP_PRTY_REF
+,cast(NULL as string) as ENTRP_PARNT_PRTY_SROGT_ID
+,cast(NULL as string) as ENTRP_PARNT_PRTY_HOST_NUM
+,trim(WEP_PSE_I.DOM_MAST_REF) AS DOM_MAST_REF
+,CASE WHEN trim(WEP_PSE_I.PROFILE_ID) is not null AND trim(WEP_PSE_I.PROFILE_ID) !='' and (trim(WEP_PSE_I.LE_ID) is null or trim(WEP_PSE_I.LE_ID) ="" ) then null
+		WHEN trim(WEP_PSE_I.PROFILE_ID) is not null AND trim(WEP_PSE_I.PROFILE_ID) !='' AND (trim(WEP_PSE_I.LE_ID) is not null AND trim(WEP_PSE_I.LE_ID) !="") then '-1i'
+		WHEN (trim(WEP_PSE_I.PROFILE_ID) is null or  trim(WEP_PSE_I.PROFILE_ID) ='') and (trim(WEP_PSE_I.LE_ID) is not null AND trim(WEP_PSE_I.LE_ID) !="") then '-2i'
+		WHEN (trim(WEP_PSE_I.PROFILE_ID) is null or  trim(WEP_PSE_I.PROFILE_ID) ='') and (trim(WEP_PSE_I.LE_ID) is null or trim(WEP_PSE_I.LE_ID) ="") then '-3i'
+		END AS  MAST_PATN_TP_CD
+,CASE WHEN trim(WEP_PSE_I.PROFILE_ID) is not null AND trim(WEP_PSE_I.PROFILE_ID) !='' AND (trim(WEP_PSE_I.LE_ID) is null or trim(WEP_PSE_I.LE_ID) ="" )  then null
+		WHEN trim(WEP_PSE_I.PROFILE_ID) is not null  AND trim(WEP_PSE_I.PROFILE_ID) !='' AND (trim(WEP_PSE_I.LE_ID) is not null AND trim(WEP_PSE_I.LE_ID) !="") then 'Individual RELATIONSHIPNO with both SCI and ICM ID Exist'
+		WHEN (trim(WEP_PSE_I.PROFILE_ID) is null or  trim(WEP_PSE_I.PROFILE_ID) ='') AND (trim(WEP_PSE_I.LE_ID) is not null AND trim(WEP_PSE_I.LE_ID) !="")  then 'Individual RELATIONSHIPNO with ICM ID not available but SCI ID available'
+		WHEN (trim(WEP_PSE_I.PROFILE_ID) is null or  trim(WEP_PSE_I.PROFILE_ID) ='') AND (trim(WEP_PSE_I.LE_ID) is null or trim(WEP_PSE_I.LE_ID) ="") then 'Individual RELATIONSHIPNO with both ICM and SCI ID not available'
+		END AS MAST_PATN_TP_DESC
+, WEP_PSE_I.INST_CLAS_CD AS INST_CLAS_CD
+, WEP_PSE_I.INST_CLAS_DESC AS INST_CLAS_DESC
+, WEP_PSE_I.SCB_STAF_FL AS SCB_STAF_FL
+, WEP_PSE_I.ISIC_CD AS ISIC_CD
+, WEP_PSE_I.ISIC_DESC AS ISIC_DESC
+,'@DATA_SRC_EBB@' as DATA_SRC
+,'@SOURCE_COUNTRY_CODE@' as SOURCE_COUNTRY_CODE
+,'EBB~SG~W_ENTRP_PRTY~C_CRTD_CORE_PRTY~1' as PROCESS_ID
+,from_unixtime(unix_timestamp()) as PPN_DTM
+,'@DT_VRSN@' as DT_VRSN
+,'@ACCS_CTRY_CD@' as ACCS_CTRY_CD
+,CASE WHEN trim(WEP_PSE_I.PROFILE_ID) IS NOT NULL  AND trim(WEP_PSE_I.PROFILE_ID) !='' THEN WEP_PSE_I.ACCS_SEGMT_CD_PSEUDO
+	  WHEN (trim(WEP_PSE_I.PROFILE_ID) IS NULL OR trim(WEP_PSE_I.PROFILE_ID) ='') THEN NULL 
+	  END AS ACCS_SEGMT_CD
+,WEP_PSE_I.CUST_BRNCH_CD AS CUST_BRNCH_CD
+,WEP_PSE_I.PRTY_SUB_TYPE_CD AS PRTY_SUB_TYPE_CD
+,'@MNTHEND_FL@' as MNTHEND_FL
+, WEP_PSE_I.segmt_eff_dt AS SEGMT_EFF_DT
+FROM ( SELECT  * FROM ( SELECT * FROM (SELECT *, ROW_NUMBER() OVER(PARTITION BY PRTY_SROGT_ID ORDER BY MAST_OPEN_DT DESC) AS ROW_NUMBER FROM @TARGET_WORK@.W_ENTRP_PRTY 
+WHERE PRTY_TYPE_CD = 'I' AND PROCESS_DATE = '@PSE_DATE@' AND DATA_SRC = '@DATA_SRC_EBB@' AND SOURCE_COUNTRY_CODE = '@SOURCE_COUNTRY_CODE@') t
+WHERE ROW_NUMBER=1 ) WEP
+LEFT JOIN (SELECT PSEUDO_KEY,ACCS_SEGMT_CD AS ACCS_SEGMT_CD_PSEUDO ,src_key2, DATA_SRC as DATA_SRC_ICM, SOURCE_COUNTRY_CODE as SOURCE_COUNTRY_CODE_ICM FROM @TARGET_WORK@.C_PSEUDO_PRTY WHERE  PROCESS_DATE = '@PSE_DATE@' AND DATA_SRC = '@DATA_SRC_ICM@' and SOURCE_COUNTRY_CODE = '@SOURCE_COUNTRY_CODE@') PSE
+ON WEP.PROFILE_ID = PSE.SRC_KEY2)  WEP_PSE_I )
+
+UNION
+
+(SELECT WEP.PRTY_SROGT_ID as PRTY_SROGT_ID
+,trim(WEP.DOM_PRTY_REF) AS DOM_PRTY_REF
+,CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") THEN NULL
+      WHEN (trim(WEP.DOM_MAST_REF) IS NOT NULL AND trim(WEP.DOM_MAST_REF) !="") THEN CONCAT(PSE.DATA_SRC_SCI, '-', PSE.SOURCE_COUNTRY_CODE_SCI, '-',PSE.PSEUDO_KEY) 
+	  WHEN (trim(WEP.LE_ID) IS NULL or trim(WEP.LE_ID) ="") THEN NULL
+	  ELSE NULL END AS ENTRP_PRTY_SROGT_ID
+, CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") THEN NULL
+      WHEN (trim(WEP.DOM_MAST_REF) IS NOT NULL AND trim(WEP.DOM_MAST_REF) !="") AND (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) AND (trim(WEP.SP_ID) is not null  AND trim(WEP.SP_ID) !="" ) THEN CONCAT(TRIM(WEP.LE_ID), '-', TRIM(WEP.SP_ID)) 
+	  WHEN (trim(WEP.LE_ID) IS NULL or trim(WEP.LE_ID) ="") THEN NULL
+	  ELSE NULL END AS ENTRP_PRTY_REF
+, CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") THEN NULL
+      WHEN (trim(WEP.DOM_MAST_REF) IS NOT NULL AND trim(WEP.DOM_MAST_REF) !="") AND (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) THEN CONCAT('SCI','-','XX-', TRIM(WEP.LE_ID))  
+	  WHEN (trim(WEP.LE_ID) IS NULL or trim(WEP.LE_ID) ="") THEN NULL
+	  ELSE NULL END AS ENTRP_PARNT_PRTY_SROGT_ID
+, CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") THEN NULL
+      WHEN (trim(WEP.DOM_MAST_REF) IS NOT NULL AND trim(WEP.DOM_MAST_REF) !="") THEN trim(WEP.LE_ID)
+	  WHEN (trim(WEP.LE_ID) IS NULL or trim(WEP.LE_ID) ="") THEN NULL
+	  ELSE NULL END AS ENTRP_PARNT_PRTY_HOST_NUM
+, trim(WEP.DOM_MAST_REF) AS DOM_MAST_REF
+, CASE WHEN WEP.PROFILE_ID is null and (trim(WEP.LE_ID) is not null  or trim(WEP.LE_ID) !="" ) THEN NULL
+	  WHEN WEP.PRTY_TYPE_CD = 'C' THEN 
+			CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="")  then  '-4c' 
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) then  '-1c'  
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then '-2c'   
+				 WHEN (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then  '-3c'  		  
+			END
+		 WHEN  WEP.PRTY_TYPE_CD = 'N' THEN 
+			CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") then  '-4n'
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) then  '-1n'  
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then '-2n'   
+				 WHEN (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') and  (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then  '-3n'  
+				   
+			END	
+		 WHEN  (WEP.PRTY_TYPE_CD <> 'C' or WEP.PRTY_TYPE_CD <> 'N') THEN 
+			CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") then  '-4u'
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) then  '-1u'  
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and  (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then '-2u'   
+				 WHEN (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then  '-3u'    
+			END
+		END AS MAST_PATN_TP_CD
+, CASE WHEN  (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') AND (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) THEN NULL
+		WHEN  WEP.PRTY_TYPE_CD = 'C' THEN 
+			CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") THEN  'Corporate RELATIONSHIPNO does not have a MASTERNO' 
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' AND (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) THEN  'Corporate RELATIONSHIPNO with both SCI and ICM ID Exist'  
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) THEN 'Corporate RELATIONSHIPNO with ICM ID available but SCI ID not available'   
+				 WHEN (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) THEN  'Corporate RELATIONSHIPNO with MASTERNO but do not have SCI ID'  
+				 
+			END
+		WHEN  WEP.PRTY_TYPE_CD = 'N' THEN 
+			CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") then  'Internal RELATIONSHIPNO does not have a MASTERNO'
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) then  'Internal RELATIONSHIPNO with both SCI and ICM ID Exist'  
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then 'Internal RELATIONSHIPNO with ICM ID available but SCI ID not available'   
+				 WHEN (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then  'Internal RELATIONSHIPNO with MASTERNO but do not have SCI ID'  	  
+			END	
+		WHEN  (WEP.PRTY_TYPE_CD <> 'C' or WEP.PRTY_TYPE_CD <> 'N') THEN
+			CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="") then 'Unknown RELATIONSHIPNO does not have a MASTERNO'
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is not null  AND trim(WEP.LE_ID) !="" ) then  'Unknown RELATIONSHIPNO with both SCI and ICM ID Exist'  
+				 WHEN trim(WEP.PROFILE_ID) is not null AND trim(WEP.PROFILE_ID) !='' and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then 'Unknown RELATIONSHIPNO with ICM ID available but SCI ID not available'   
+				 WHEN (trim(WEP.PROFILE_ID) IS NULL OR trim(WEP.PROFILE_ID) ='') and (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) then  'Unknown RELATIONSHIPNO with MASTERNO but do not have SCI ID'  			  
+			END
+	END AS MAST_PATN_TP_DESC
+,WEP.INST_CLAS_CD AS INST_CLAS_CD
+,WEP.INST_CLAS_DESC AS INST_CLAS_DESC
+,WEP.SCB_STAF_FL AS SCB_STAF_FL
+,WEP.ISIC_CD AS  ISIC_CD
+,WEP.ISIC_DESC AS ISIC_DESC
+,'@DATA_SRC_EBB@' as DATA_SRC
+,'@SOURCE_COUNTRY_CODE@' as SOURCE_COUNTRY_CODE
+,'EBB~SG~W_ENTRP_PRTY~C_CRTD_CORE_PRTY~1' as PROCESS_ID
+,from_unixtime(unix_timestamp()) as PPN_DTM
+,'@DT_VRSN@' as DT_VRSN
+,'@ACCS_CTRY_CD@' as ACCS_CTRY_CD
+,CASE WHEN (trim(WEP.DOM_MAST_REF) IS NULL  OR trim(WEP.DOM_MAST_REF) ="")  THEN NULL
+      WHEN trim(WEP.DOM_MAST_REF) IS NOT NULL AND trim(WEP.DOM_MAST_REF) !='' THEN PSE.ACCS_SEGMT_CD_PSEUDO 
+	  WHEN (trim(WEP.LE_ID) is null or trim(WEP.LE_ID) ="" ) THEN NULL
+	  ELSE NULL END AS ACCS_SEGMT_CD
+,WEP.CUST_BRNCH_CD AS CUST_BRNCH_CD
+,WEP.PRTY_SUB_TYPE_CD AS PRTY_SUB_TYPE_CD
+,'@MNTHEND_FL@' as MNTHEND_FL
+,WEP.segmt_eff_dt AS SEGMT_EFF_DT
+FROM 
+( SELECT * FROM 
+(SELECT *, ROW_NUMBER() 
+OVER (PARTITION BY PRTY_SROGT_ID ORDER BY MAST_OPEN_DT DESC, CASE WHEN (trim(LE_ID) IS NULL OR trim(LE_ID) ="")  THEN 0 ELSE 1 END DESC ) AS ROWNUMBER
+FROM @TARGET_WORK@.W_ENTRP_PRTY  WHERE PROCESS_DATE = '@PSE_DATE@' AND DATA_SRC = '@DATA_SRC_EBB@' AND SOURCE_COUNTRY_CODE = '@SOURCE_COUNTRY_CODE@'
+AND PRTY_TYPE_CD <>'I' 
+ORDER BY MAST_OPEN_DT DESC,DOM_MAST_REF, LE_ID) t
+WHERE t.ROWNUMBER=1)WEP 
+LEFT JOIN 
+(SELECT PSEUDO_KEY,ACCS_SEGMT_CD AS ACCS_SEGMT_CD_PSEUDO ,SRC_KEY1,DATA_SRC AS DATA_SRC_SCI, SOURCE_COUNTRY_CODE AS SOURCE_COUNTRY_CODE_SCI FROM @TARGET_WORK@.C_PSEUDO_PRTY WHERE PROCESS_DATE = '@PREV_SCI@' AND DATA_SRC = '@DATA_SRC_SCI@' AND SOURCE_COUNTRY_CODE = '@SOURCE_COUNTRY_CODE_SCI@') PSE
+ON CONCAT(TRIM(WEP.LE_ID), '-', TRIM(WEP.SP_ID)) = PSE.SRC_KEY1)c_crtd_core_prtymaster1002
