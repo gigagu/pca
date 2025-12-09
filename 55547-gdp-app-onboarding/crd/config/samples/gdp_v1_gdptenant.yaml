@@ -1,0 +1,9 @@
+apiVersion: gdp.standardchartered.com/v1
+kind: GDPTenant
+metadata:
+  labels:
+    app.kubernetes.io/name: crd
+    app.kubernetes.io/managed-by: kustomize
+  name: gdptenant-sample
+spec:
+  # TODO(user): Add fields here

@@ -1,0 +1,8 @@
+---
+- hosts: all
+  gather_facts: False
+  connection: local
+  tasks:
+    - name: echo
+      shell: echo "hello world"
+      ignore_errors: true

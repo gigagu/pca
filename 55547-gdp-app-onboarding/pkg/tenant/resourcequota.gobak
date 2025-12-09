@@ -1,0 +1,84 @@
+package tenant
+
+// sync resource quota
+// time ticket? or go routine for loop? or informer for monitor GDPTenant change?
+// when GDPTenant change, sync resource quota to k8s
+// resource quota include cpu, memory, gpu, storage
+
+// manual calculate resouce quota
+
+/*
+*
+GDPTenant 资源配额定义
+读取gdptenant 中ResourceQuota（如 CPU、内存等），通常在 GDPTenant.spec.resourceQuota 字段。
+
+Namespace 资源配额同步
+实现监听 GDPTenant 和其下属 Namespaces 的变化。每当有 Namespace 创建、删除或资源配额变更时，实现：
+* 计算所有 Namespace 的资源总和（已用+新申请）
+* 汇总所有属于该 GDPTenant 的 Namespace 的 ResourceQuota 使用量. 并且更新ResourceQuota资源annation如更新annotation为gdptenant-used-cpu=xx, gdptenant-used-memory=xx
+* 更新tenant里面每个namespace的ResourceQuota资源为GDPTenant.spec.resourceQuota 减去 annotation为gdptenant-used-cpu=xx, gdptenant-used-memory=xx
+// */
+// func SyncNamespaceResourceQuotas(ctx context.Context, clientset *kubernetes.Clientset, tenant *gdptenantv1.GDPTenant) error {
+// 	// 1. 读取 GDPTenant 的总配额
+// 	totalCPU := resource.MustParse(tenant.Spec.ResourceQuotas.LimitsCPU)
+// 	totalMem := resource.MustParse(tenant.Spec.ResourceQuotas.LimitsMemory)
+// 	tenantQuota := "gdptenant-resource-quota" // 假设每个 namespace 都有一个名为 tenant-resource-quota 的 ResourceQuota
+// 	// 2. 汇总所有 namespace 的已用资源
+// 	usedCPU := resource.MustParse("0")
+// 	usedMem := resource.MustParse("0")
+
+// 	for _, ns := range tenant.Spec.Namespaces {
+// 		rq, err := clientset.CoreV1().ResourceQuotas(ns).Get(ctx, tenantQuota, metav1.GetOptions{})
+// 		if err != nil {
+// 			clientset.CoreV1().ResourceQuotas(ns).Create(ctx, &corev1.ResourceQuota{
+// 				ObjectMeta: metav1.ObjectMeta{
+// 					Name:      tenantQuota,
+// 					Namespace: ns,
+// 					Annotations: map[string]string{
+// 						"gdptenant-used-cpu":    "0",
+// 						"gdptenant-used-memory": "0",
+// 					},
+// 				},
+// 				Spec: corev1.ResourceQuotaSpec{
+// 					Hard: corev1.ResourceList{
+// 						corev1.ResourceLimitsCPU:    *resource.NewQuantity(0, resource.DecimalSI),
+// 						corev1.ResourceLimitsMemory: *resource.NewQuantity(0, resource.BinarySI),
+// 					},
+// 				},
+// 			}, metav1.CreateOptions{})
+// 			continue
+// 		}
+// 		nsCPU := rq.Status.Used[corev1.ResourceLimitsCPU]
+// 		nsMem := rq.Status.Used[corev1.ResourceLimitsMemory]
+// 		usedCPU.Add(nsCPU)
+// 		usedMem.Add(nsMem)
+
+// 		// 3. 更新 annotation
+// 		if rq.Annotations == nil {
+// 			rq.Annotations = map[string]string{}
+// 		}
+// 		rq.Annotations["gdptenant-used-cpu"] = nsCPU.String()
+// 		rq.Annotations["gdptenant-used-memory"] = nsMem.String()
+// 		_, _ = clientset.CoreV1().ResourceQuotas(ns).Update(context.TODO(), rq, metav1.UpdateOptions{})
+// 	}
+
+// 	// 4. 计算剩余可分配资源
+// 	remainCPU := totalCPU.DeepCopy()
+// 	remainCPU.Sub(usedCPU)
+// 	remainMem := totalMem.DeepCopy()
+// 	remainMem.Sub(usedMem)
+
+// 	// 5. 更新每个 namespace 的 ResourceQuota（这里简单分配剩余资源到每个ns，可自定义分配策略）
+// 	for _, ns := range tenant.Spec.Namespaces {
+// 		rq, err := clientset.CoreV1().ResourceQuotas(ns).Get(context.TODO(), "tenant-resource-quota", metav1.GetOptions{})
+// 		if err != nil {
+// 			continue
+// 		}
+// 		// 这里假设平均分配剩余资源
+// 		n := len(tenant.Spec.Namespaces)
+// 		rq.Spec.Hard[corev1.ResourceLimitsCPU] = *resource.NewQuantity(remainCPU.Value()/int64(n), resource.DecimalSI)
+// 		rq.Spec.Hard[corev1.ResourceLimitsMemory] = *resource.NewQuantity(remainMem.Value()/int64(n), resource.BinarySI)
+// 		_, _ = clientset.CoreV1().ResourceQuotas(ns).Update(context.TODO(), rq, metav1.UpdateOptions{})
+// 	}
+// 	return nil
+// }
