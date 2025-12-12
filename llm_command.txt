@@ -1,0 +1,7 @@
+python llm_demo.py \
+  --example_input_path ./examples/example_input.sql \
+  --example_ddl_path ./examples/example_ddl.sql \
+  --example_output_path ./examples/example_output.sql \
+  --test_input_path ./test/test_input.sql \
+  --test_output_path ./dbt_project/models/etl1.sql \
+  --job_manifest_path ./config/job_manifest.yaml
