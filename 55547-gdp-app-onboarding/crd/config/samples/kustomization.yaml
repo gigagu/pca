@@ -1,4 +1,0 @@
-## Append samples of your project ##
-resources:
-- gdp_v1_gdptenant.yaml
-# +kubebuilder:scaffold:manifestskustomizesamples

@@ -1,5 +1,0 @@
-images:
-  ske-ldap-auth:
-    imagePath: tde/ado/gdp/
-    version: imageTags
-    promote: true
