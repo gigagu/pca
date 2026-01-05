@@ -71,6 +71,10 @@ def apply_trino_ranger_policies(
     """
     Apply Trino Ranger policies from ranger-access.yaml manifest.
     
+    Creates two policies:
+    1. Trino-policy-{tenant-itam}-{tenant-name}-fullaccess: for all "all" permission schemas
+    2. Trino-policy-{tenant-itam}-{tenant-name}-readonlyaccess: for all "readOnly" permission schemas
+    
     Args:
         manifest_path: Path to ranger-access.yaml file
         env_config: Environment configuration dictionary
@@ -86,6 +90,13 @@ def apply_trino_ranger_policies(
         logger.info("No schemas found in manifest, skipping Trino Ranger policies")
         return
     
+    # Get tenant information
+    tenant_itam = gdp_config.get("tenant-itam", "")
+    tenant_name = gdp_config.get("tenant-name", "")
+    
+    if not tenant_itam or not tenant_name:
+        raise ValueError("tenant-itam and tenant-name are required in gdp-ranger-config")
+    
     # Get Trino catalog from config
     trino_catalog = env_config.get("trino_catalog", "gdp_global")
     
@@ -94,11 +105,14 @@ def apply_trino_ranger_policies(
     if not ranger_base_url:
         raise ValueError("RANGER_BASE_URL not found in environment configuration")
     
-    # Process each schema
+    # Group schemas by permission type
+    fullaccess_schemas = []
+    fullaccess_groups = []
+    readonly_schemas = []
+    readonly_groups = []
+    
     for schema_config in schemas:
         schema_name = schema_config.get("schema-name")
-        table_names = normalize_to_list(schema_config.get("table-names", ["*"]))
-        column_names = normalize_to_list(schema_config.get("column-names", ["*"]))
         permission_type = schema_config.get("permission-type", "readOnly")
         ad_groups = normalize_to_list(schema_config.get("ad-groups", []))
         
@@ -110,29 +124,44 @@ def apply_trino_ranger_policies(
             logger.warning(f"Skipping schema {schema_name} with no ad-groups")
             continue
         
-        # Determine access types based on permission type
         if permission_type.lower() == "all":
-            access_types = ["select", "insert", "create", "drop", "delete", "all"]
+            fullaccess_schemas.append(schema_name)
+            fullaccess_groups.extend(ad_groups)
         else:  # readOnly
-            access_types = ["select", "show"]
-        
-        # Create policy name
-        policy_name = f"trino-{schema_name}-{permission_type.lower()}"
-        
-        # Create Trino policy
+            readonly_schemas.append(schema_name)
+            readonly_groups.extend(ad_groups)
+    
+    # Remove duplicate groups while preserving order
+    fullaccess_groups = list(dict.fromkeys(fullaccess_groups))
+    readonly_groups = list(dict.fromkeys(readonly_groups))
+    
+    # Create fullaccess policy
+    if fullaccess_schemas and fullaccess_groups:
+        fullaccess_policy_name = f"Trino-policy-{tenant_itam}-{tenant_name}-fullaccess"
         create_trino_policy(
-            policy_name=policy_name,
+            policy_name=fullaccess_policy_name,
             service_name=ranger_service_name,
             catalog=trino_catalog,
-            schema=schema_name,
-            tables=table_names,
-            columns=column_names,
-            groups=ad_groups,
-            access_types=access_types,
+            schemas=fullaccess_schemas,
+            groups=fullaccess_groups,
+            access_types=["select", "insert", "create", "drop", "delete", "all"],
             ranger_base_url=ranger_base_url
         )
-        
-        logger.info(f"Trino Ranger policy {policy_name} created for schema {schema_name}")
+        logger.info(f"Trino Ranger fullaccess policy {fullaccess_policy_name} created for schemas: {fullaccess_schemas}")
+    
+    # Create readonly policy
+    if readonly_schemas and readonly_groups:
+        readonly_policy_name = f"Trino-policy-{tenant_itam}-{tenant_name}-readonlyaccess"
+        create_trino_policy(
+            policy_name=readonly_policy_name,
+            service_name=ranger_service_name,
+            catalog=trino_catalog,
+            schemas=readonly_schemas,
+            groups=readonly_groups,
+            access_types=["select", "show"],
+            ranger_base_url=ranger_base_url
+        )
+        logger.info(f"Trino Ranger readonly policy {readonly_policy_name} created for schemas: {readonly_schemas}")
     
     logger.info(f"All Trino Ranger policies created successfully")
 
@@ -169,9 +198,7 @@ def create_trino_policy(
     policy_name: str,
     service_name: str,
     catalog: str,
-    schema: str,
-    tables: List[str],
-    columns: List[str],
+    schemas: List[str],
     groups: List[str],
     access_types: List[str],
     ranger_base_url: str
@@ -183,15 +210,17 @@ def create_trino_policy(
         policy_name: Policy name
         service_name: Ranger service name (e.g., gdp_trino_sit)
         catalog: Trino catalog name
-        schema: Trino schema name
-        tables: List of table names (can include "*" for all)
-        columns: List of column names (can include "*" for all)
+        schemas: List of Trino schema names
         groups: List of AD groups
         access_types: List of access types (e.g., ["select", "insert"])
         ranger_base_url: Ranger base URL
     """
     if not groups:
         logger.warning(f"No groups specified for policy {policy_name}, skipping")
+        return
+    
+    if not schemas:
+        logger.warning(f"No schemas specified for policy {policy_name}, skipping")
         return
     
     # Build access list
@@ -210,15 +239,15 @@ def create_trino_policy(
                 "isRecursive": False
             },
             "schema": {
-                "values": [schema],
+                "values": schemas,
                 "isRecursive": False
             },
             "table": {
-                "values": tables,
+                "values": ["*"],
                 "isRecursive": False
             },
             "column": {
-                "values": columns,
+                "values": ["*"],
                 "isRecursive": False
             }
         },
