@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gdp-k8s-pod-template
+  namespace: t-55547-gdpdev-edmpt1-sit
+  annotations:
+    vault.hashicorp.com/agent-inject: 'true'
+    vault.hashicorp.com/agent-pre-populate-only : "true"
+    vault.hashicorp.com/agent-set-security-context: 'true'
+    vault.hashicorp.com/agent-run-as-user: '1002'
+    vault.hashicorp.com/agent-run-as-group: '1002'
+    vault.hashicorp.com/agent-inject-token: 'true'
+    vault.hashicorp.com/agent-init-json-patch: '[{"op": "replace", "path": "/securityContext/seccompProfile",
+      "value": {"type": "RuntimeDefault"}}]'
+    vault.hashicorp.com/agent-json-patch: '[{"op": "replace", "path": "/securityContext/seccompProfile",
+      "value": {"type": "RuntimeDefault"}}]'
+    vault.hashicorp.com/agent-service-account-token-volume-name: vault-auth
+    vault.hashicorp.com/role: 55547_global_app_k8s_t-55547-gdpdev-edmpt1-sit_role
+    vault.hashicorp.com/agent-inject-secret-s3-authorizer-secret: 'scb/ad/zone1/static-cred/svc.sths.adm.001.dev'
+    vault.hashicorp.com/agent-inject-template-s3-authorizer-secret: |
+      {{- with secret "scb/ad/zone1/static-cred/svc.sths.adm.001.dev" -}}
+      {{ .Data.username }}
+      {{ .Data.password }}
+      {{- end }}
+    vault.hashicorp.com/secret-volume-path: /var/run/secret/auth/
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    supplementalGroups: [1000]
+  containers:
+    - name: gdp-k8s-pod-template
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - "ALL"
+      imagePullPolicy: Always
+      env:
+        - name: S3_AUTHORIZER_SERVER_BASE_URL
+          value: "https://s3auth-api-stg.55547.app.standardchartered.com"
+        - name: S3_ENDPOINT_URL
+          value: "https://minio-os1-stg.50821.app.standardchartered.com:4161"
+        - name: AWS_ACCESS_KEY
+          value: "NO_NEED"
+        - name: AWS_SECRET_KEY
+          value: "NO_NEED"
+        - name: S3_AUTHORIZER_AUTH_FILE
+          value: "/var/run/secret/auth/s3-authorizer-secret"
+        - name: HIVE_ENDPOINT_URL
+          value: "thrift://gdp-hive-metastore.t-55547-gdpdev-platform-sit.svc.cluster.local:9083"
+        - name: HIVE_TRUSTSTORE_CRD
+          valueFrom:
+            secretKeyRef:
+              name: hive-credential
+              key: HIVE_TRUSTSTORE_CRD
+        - name: DATAHUB_REST_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: datahub-credential
+              key: DATAHUB_REST_TOKEN
+        - name: DATAHUB_REST_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: datahub-credential
+              key: DATAHUB_REST_ENDPOINT
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: APP_BUCKET_NAME
+          value: sc-rds-gbl-grp-sit-55547
+      volumeMounts:
+        - name: gdp-truststore-volume
+          mountPath: /etc/gdp/ssl
+          readOnly: true
+        - name: gdp-tenant-profile-volume
+          mountPath: /etc/gdp/profiles/default
+          readOnly: true
+        - name: k8s-sa-token
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+      resources:
+        requests:
+          memory: "2Gi"
+          cpu: "1"
+        limits:
+          memory: "20Gi"
+          cpu: "4"
+  volumes:
+    - name: vault-auth
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: vault-auth
+              expirationSeconds: 7200
+              audience: vault
+    - name: gdp-truststore-volume
+      secret:
+        secretName: gdp-truststore-bundle
+    - name: gdp-tenant-profile-volume
+      configMap:
+        name: gdp-tenant-profile
+    - name: k8s-sa-token
+      projected:
+        defaultMode: 420
+        sources:
+          - serviceAccountToken:
+              audience: "https://kubernetes.default.svc.cluster.local"
+              expirationSeconds: 13600
+              path: token
+          - configMap:
+              items:
+                - key: ca.crt
+                  path: ca.crt
+              name: kube-root-ca.crt
+          - downwardAPI:
+              items:
+                - fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+                  path: namespace
